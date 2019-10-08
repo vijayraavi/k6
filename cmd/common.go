@@ -45,10 +45,12 @@ func must(err error) {
 	}
 }
 
-// Silently set an exit code.
+// ExitCode uses to silently set an exit code.
+// Message is used to show details information about underlying error.
 type ExitCode struct {
 	error
-	Code int
+	Code    int
+	Message string
 }
 
 // A writer that syncs writes with a mutex and, if the output is a TTY, clears before newlines.
