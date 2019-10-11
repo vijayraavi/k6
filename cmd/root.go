@@ -91,7 +91,7 @@ func Execute() {
 		if e, ok := err.(ExitCode); ok {
 			code = e.Code
 			if e.Message != "" {
-				logger = logger.WithField("error", e.Message)
+				logger = logger.WithField("hint", e.Message)
 			}
 		}
 		logger.Error(err)
