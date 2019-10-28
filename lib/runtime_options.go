@@ -33,7 +33,7 @@ type RuntimeOptions struct {
 	// Whether to pass the actual system environment variables to the JS runtime
 	IncludeSystemEnvVars null.Bool `json:"includeSystemEnvVars" envconfig:"K6_INCLUDE_SYSTEM_ENV_VARS"`
 
-	// JS compatibility mode: "latest" (Goja+Babel+core.js) or "es5" (plain Goja)
+	// JS compatibility mode: "extended" (Goja+Babel+core.js) or "base" (plain Goja)
 	CompatibilityMode null.String `json:"compatibilityMode"`
 
 	// Environment variables passed onto the runner
