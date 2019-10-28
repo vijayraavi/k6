@@ -70,7 +70,7 @@ func New() *Compiler {
 
 // Transform the given code into ES5, while synchronizing to ensure only a single
 // babel instance is in use.
-func (c *Compiler) Transform(src, filename string) (code string, srcmap SourceMap, err error) {
+func (c *Compiler) Transform(src, filename string) (code string, srcmap *SourceMap, err error) {
 	var b *babel
 	if b, err = newBabel(); err != nil {
 		return
@@ -131,27 +131,29 @@ func newBabel() (*babel, error) {
 	return babl, err
 }
 
-func (b *babel) Transform(src, filename string) (code string, srcmap SourceMap, err error) {
+func (b *babel) Transform(src, filename string) (string, *SourceMap, error) {
 	opts := DefaultOpts
 	opts["filename"] = filename
 
 	startTime := time.Now()
 	v, err := b.transform(b.this, b.vm.ToValue(src), b.vm.ToValue(opts))
 	if err != nil {
-		return
+		return "", nil, err
 	}
 	logrus.WithField("t", time.Since(startTime)).Debug("Babel: Transformed")
 
 	vO := v.ToObject(b.vm)
+	var code string
 	if err = b.vm.ExportTo(vO.Get("code"), &code); err != nil {
-		return
+		return code, nil, err
 	}
-	var rawmap map[string]interface{}
-	if err = b.vm.ExportTo(vO.Get("map"), &rawmap); err != nil {
-		return
+	var rawMap map[string]interface{}
+	if err = b.vm.ExportTo(vO.Get("map"), &rawMap); err != nil {
+		return code, nil, err
 	}
-	if err = mapstructure.Decode(rawmap, &srcmap); err != nil {
-		return
+	var srcMap SourceMap
+	if err = mapstructure.Decode(rawMap, &srcMap); err != nil {
+		return code, &srcMap, err
 	}
-	return
+	return code, &srcMap, err
 }
