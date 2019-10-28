@@ -133,7 +133,10 @@ func newBabel() (*babel, error) {
 func (b *babel) Transform(src, filename string) (string, *SourceMap, error) {
 	b.mutex.Lock()
 	defer b.mutex.Unlock()
-	opts := DefaultOpts
+	opts := make(map[string]interface{})
+	for k, v := range DefaultOpts {
+		opts[k] = v
+	}
 	opts["filename"] = filename
 
 	startTime := time.Now()
