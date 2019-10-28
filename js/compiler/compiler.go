@@ -44,8 +44,8 @@ var (
 		"highlightCode": false,
 	}
 
-	once sync.Once // nolint:gochecknoglobals
-	babl *babel    // nolint:gochecknoglobals
+	once        sync.Once // nolint:gochecknoglobals
+	globalBabel *babel    // nolint:gochecknoglobals
 )
 
 // CompatibilityMode specifies the JS compatibility mode
@@ -119,13 +119,13 @@ func newBabel() (*babel, error) {
 
 		this := vm.Get("Babel")
 		bObj := this.ToObject(vm)
-		babl = &babel{vm: vm, this: this}
-		if err = vm.ExportTo(bObj.Get("transform"), &babl.transform); err != nil {
+		globalBabel = &babel{vm: vm, this: this}
+		if err = vm.ExportTo(bObj.Get("transform"), &globalBabel.transform); err != nil {
 			return
 		}
 	})
 
-	return babl, err
+	return globalBabel, err
 }
 
 // Transform the given code into ES5, while synchronizing to ensure only a single
