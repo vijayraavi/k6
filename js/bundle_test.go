@@ -419,12 +419,12 @@ func TestNewBundleFromArchive(t *testing.T) {
 			cm   compiler.CompatibilityMode
 			code string
 		}{
-			{compiler.CompatibilityModeExtended,
-				`export let options = { vus: 12345 };
+			{compiler.CompatibilityModeExtended, `
+				export let options = { vus: 12345 };
 				export default function() { return "hi!"; };`},
-			{compiler.CompatibilityModeBase,
-				`module.exports.options = { vus: 12345 };
-					module.exports.default = function() { return "hi!" };`},
+			{compiler.CompatibilityModeBase, `
+				module.exports.options = { vus: 12345 };
+				module.exports.default = function() { return "hi!" };`},
 		}
 
 		for _, tc := range testCases {
@@ -704,14 +704,14 @@ func TestBundleMakeArchive(t *testing.T) {
 			script  string
 			exclaim string
 		}{
-			{compiler.CompatibilityModeExtended,
-				`import exclaim from "./exclaim.js";
+			{compiler.CompatibilityModeExtended, `
+				import exclaim from "./exclaim.js";
 				export let options = { vus: 12345 };
 				export let file = open("./file.txt");
 				export default function() { return exclaim(file); };`,
 				`export default function(s) { return s + "!" };`},
-			{compiler.CompatibilityModeBase,
-				`var exclaim = require("./exclaim.js");
+			{compiler.CompatibilityModeBase, `
+				var exclaim = require("./exclaim.js");
 				module.exports.options = { vus: 12345 };
 				module.exports.file = open("./file.txt");
 				module.exports.default = function() { return exclaim(module.exports.file); };`,
