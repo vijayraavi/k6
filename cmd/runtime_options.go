@@ -54,7 +54,11 @@ func runtimeOptionFlagSet(includeSysEnv bool) *pflag.FlagSet {
 	flags.SortFlags = false
 	flags.Bool("include-system-env-vars", includeSysEnv, "pass the real system environment variables to the runtime")
 	flags.String("compatibility-mode", "extended",
-		`JavaScript compiler compatibility mode, "extended" (ES6+) or "base" (ES5.1+)`)
+		`JavaScript compiler compatibility mode, "extended" or "base"
+base: pure Golang JS VM supporting ES5.1+
+extended: base + Babel with ES2015 preset + core.js v2,
+          slower and memory consuming but with greater JS support
+`)
 	flags.StringArrayP("env", "e", nil, "add/override environment variable with `VAR=value`")
 	return flags
 }
