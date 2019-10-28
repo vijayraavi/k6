@@ -68,16 +68,13 @@ func New() *Compiler {
 	return &Compiler{}
 }
 
-// Transform the given code into ES5, while synchronizing to ensure only a single
-// babel instance is in use.
+// Transform the given code into ES5
 func (c *Compiler) Transform(src, filename string) (code string, srcmap *SourceMap, err error) {
 	var b *babel
 	if b, err = newBabel(); err != nil {
 		return
 	}
 
-	b.mutex.Lock()
-	defer b.mutex.Unlock()
 	return b.Transform(src, filename)
 }
 
@@ -131,7 +128,11 @@ func newBabel() (*babel, error) {
 	return babl, err
 }
 
+// Transform the given code into ES5, while synchronizing to ensure only a single
+// bundle instance / Goja VM is in use at a time.
 func (b *babel) Transform(src, filename string) (string, *SourceMap, error) {
+	b.mutex.Lock()
+	defer b.mutex.Unlock()
 	opts := DefaultOpts
 	opts["filename"] = filename
 
