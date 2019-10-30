@@ -99,7 +99,7 @@ This will execute the test on the Load Impact cloud service. Use "k6 login cloud
 
 		derivedConf, cerr := deriveAndValidateConfig(conf)
 		if cerr != nil {
-			return ExitCode{cerr, invalidConfigErrorCode, ""}
+			return ExitCode{error: cerr, Code: invalidConfigErrorCode}
 		}
 
 		err = r.SetOptions(conf.Options)
@@ -232,14 +232,14 @@ This will execute the test on the Load Impact cloud service. Use "k6 login cloud
 
 		if testProgress == nil {
 			//nolint:golint
-			return ExitCode{errors.New("Test progress error"), 98, ""}
+			return ExitCode{error: errors.New("Test progress error"), Code: 98}
 		}
 
 		fprintf(stdout, "     test status: %s\n", ui.ValueColor.Sprint(testProgress.RunStatusText))
 
 		if testProgress.ResultStatus == cloud.ResultStatusFailed {
 			//nolint:golint
-			return ExitCode{errors.New("The test has failed"), 99, ""}
+			return ExitCode{error: errors.New("The test has failed"), Code: 99}
 		}
 
 		return nil

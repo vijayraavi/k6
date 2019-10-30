@@ -173,7 +173,7 @@ a commandline interface for interacting with it.`,
 
 		conf, cerr := deriveAndValidateConfig(conf)
 		if cerr != nil {
-			return ExitCode{cerr, invalidConfigErrorCode, ""}
+			return ExitCode{error: cerr, Code: invalidConfigErrorCode}
 		}
 
 		// If summary trend stats are defined, update the UI to reflect them
@@ -407,15 +407,15 @@ a commandline interface for interacting with it.`,
 				case lib.TimeoutError:
 					switch e.Place() {
 					case "setup":
-						return ExitCode{err, setupTimeoutErrorCode, e.Hint()}
+						return ExitCode{error: err, Code: setupTimeoutErrorCode, Message: e.Hint()}
 					case "teardown":
-						return ExitCode{err, teardownTimeoutErrorCode, e.Hint()}
+						return ExitCode{error: err, Code: teardownTimeoutErrorCode, Message: e.Hint()}
 					default:
-						return ExitCode{err, genericTimeoutErrorCode, ""}
+						return ExitCode{error: err, Code: genericTimeoutErrorCode}
 					}
 				default:
 					//nolint:golint
-					return ExitCode{errors.New("Engine error"), genericEngineErrorCode, err.Error()}
+					return ExitCode{error: errors.New("Engine error"), Code: genericEngineErrorCode, Message: err.Error()}
 				}
 			case sig := <-sigC:
 				logrus.WithField("sig", sig).Debug("Exiting in response to signal")
@@ -460,7 +460,7 @@ a commandline interface for interacting with it.`,
 		}
 
 		if engine.IsTainted() {
-			return ExitCode{errors.New("some thresholds have failed"), thresholdHaveFailedErroCode, ""}
+			return ExitCode{error: errors.New("some thresholds have failed"), Code: thresholdHaveFailedErroCode}
 		}
 		return nil
 	},
