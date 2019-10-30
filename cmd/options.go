@@ -68,8 +68,8 @@ func optionFlagSet() *pflag.FlagSet {
 	// system-tags must have a default value, but we can't specify it here, otherwiese, it will always override others.
 	// set it to nil here, and add the default in applyDefault() instead.
 	systemTagsCliHelpText := fmt.Sprintf(
-		"only include these system tags in metrics (default %s)",
-		lib.DefaultSystemTagList,
+		"only include these system tags in metrics (default %q)",
+		stats.DefaultSystemTagSet.SetString(),
 	)
 	flags.StringSlice("system-tags", nil, systemTagsCliHelpText)
 	flags.StringSlice("tag", nil, "add a `tag` to be applied to all samples, as `[name]=[value]`")
@@ -89,7 +89,7 @@ func getOptions(flags *pflag.FlagSet) (lib.Options, error) {
 		Batch:                 getNullInt64(flags, "batch"),
 		RPS:                   getNullInt64(flags, "rps"),
 		UserAgent:             getNullString(flags, "user-agent"),
-		HttpDebug:             getNullString(flags, "http-debug"),
+		HTTPDebug:             getNullString(flags, "http-debug"),
 		InsecureSkipTLSVerify: getNullBool(flags, "insecure-skip-tls-verify"),
 		NoConnectionReuse:     getNullBool(flags, "no-connection-reuse"),
 		NoVUConnectionReuse:   getNullBool(flags, "no-vu-connection-reuse"),
@@ -128,7 +128,7 @@ func getOptions(flags *pflag.FlagSet) (lib.Options, error) {
 		if err != nil {
 			return opts, err
 		}
-		opts.SystemTags = lib.GetTagSet(systemTagList...)
+		opts.SystemTags = stats.ToSystemTagSet(systemTagList)
 	}
 
 	blacklistIPStrings, err := flags.GetStringSlice("blacklist-ip")
